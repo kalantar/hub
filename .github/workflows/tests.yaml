@@ -18,9 +18,9 @@ jobs:
       uses: actions/checkout@v2
     
     - run: |
-      git clone github.com/sriumcp/iter8@initialv0.9
-      cd iter8
-      make install
+        git clone github.com/sriumcp/iter8@initialv0.9
+        cd iter8
+        make install
 
     - name: run httpbin
       run: |
@@ -76,9 +76,9 @@ jobs:
       uses: actions/checkout@v2
     
     - run: |
-      git clone github.com/sriumcp/iter8@initialv0.9
-      cd iter8
-      make install
+        git clone github.com/sriumcp/iter8@initialv0.9
+        cd iter8
+        make install
 
     - name: run greeter
       run: |
