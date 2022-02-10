@@ -17,7 +17,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
     
-    - run: go install github.com/sriumcp/iter8@initialv0.9
+    - run: |
+      git clone github.com/sriumcp/iter8@initialv0.9
+      cd iter8
+      make install
 
     - name: run httpbin
       run: |
@@ -72,7 +75,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
     
-    - run: go install github.com/sriumcp/iter8@initialv0.9
+    - run: |
+      git clone github.com/sriumcp/iter8@initialv0.9
+      cd iter8
+      make install
 
     - name: run greeter
       run: |
