@@ -2,7 +2,8 @@ name: tests
 
 on:
   pull_request:
-
+  workflow_dispatch:
+  
 jobs:
   e2e-load-test-http:
     name: local httpbin tests
