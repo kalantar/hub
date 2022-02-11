@@ -36,7 +36,7 @@ jobs:
       run: |
         set -e
         cd charts/load-test-http
-        iter8 exp -c . --set url=http://127.0.0.1/get
+        iter8 gen -c . --set url=http://127.0.0.1/get
         cat experiment.yaml
         iter8 run
         iter8 assert -c completed -c nofailure -c slos
@@ -45,7 +45,7 @@ jobs:
       run: |
         set -e
         cd charts/load-test-http
-        iter8 exp -c . --set url=http://127.0.0.1/get \
+        iter8 gen -c . --set url=http://127.0.0.1/get \
                   --set SLOs.latency-p25=80 \
                   --set SLOs.latency-p50=100 \
                   --set SLOs.latency-'p95\.0'=200
@@ -57,7 +57,7 @@ jobs:
       run: |
         set -e
         cd charts/load-test-http
-        iter8 exp -c . --set url=http://127.0.0.1/post \
+        iter8 gen -c . --set url=http://127.0.0.1/post \
                   --set payloadURL=https://cdn.pixabay.com/photo/2021/09/08/17/58/poppy-6607526_1280.jpg \
                   --set contentType="image/jpeg" \
                   --set SLOs.latency-p25=80 \
@@ -98,7 +98,7 @@ jobs:
         set -e
         cd charts/load-test-grpc
         export LOG_LEVEL=trace
-        iter8 exp -c . --set-string host="127.0.0.1:50051" \
+        iter8 gen -c . --set-string host="127.0.0.1:50051" \
                   --set-string call="helloworld.Greeter.SayHello" \
                   --set-string protoURL="https://raw.githubusercontent.com/grpc/grpc-go/master/examples/helloworld/helloworld/helloworld.proto" \
                   --set data.name="frodo" \
