@@ -2,8 +2,7 @@
 
 Welcome! We are delighted that you want to contribute to Iter8! 💖
 
-As you get started, you are in the best position to give us feedback on areas of
-our project that we need help with including:
+As you get started, you are in the best position to give us feedback on various topics, including:
 
 * Problems found during setup of Iter8
 * Gaps in the "your first experiment" tutorial and other documentation
