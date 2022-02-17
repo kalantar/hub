@@ -103,9 +103,13 @@ metadataFile: null
 metadataURL: null
 
 ### SLOs  A map of service level objectives (SLOs) that the app needs to satisfy.
-### Keys are metric names, 
-### and values are acceptable upper limits for the metric.
+### Keys are metric names. Values are acceptable upper limits for the metric.
 ### Valid metric names are grpc/error-rate, grpc/error-count, 
 ### grpc/latency/max, grpc/latency/mean, grpc/latency/stddev, and grpc/latency/pX, 
 ### where X is any percentile (i.e., any float value between 0 and 100).
+### Unit of latency is msec.
+### Example:
+###   grpc/error-rate: 0
+###   grpc/latency/mean: 50
+###   grpc/latency/p99: 200
 SLOs: null

@@ -1,4 +1,4 @@
-{{ define "load-test-http.experiment" -}}
+{{ define "experiment" -}}
 # task 1: generate HTTP requests for application URL
 # collect Iter8's built-in HTTP latency and error-related metrics
 - task: gen-load-and-collect-metrics-http
@@ -21,15 +21,15 @@
     {{- end }}
 
     {{- if .Values.payloadStr }}
-    payloadStr: "{{ .Values.payloadStr | toString }}"
+    payloadStr: {{ .Values.payloadStr | toString }}
     {{- end }}
 
     {{- if .Values.payloadURL }}
-    payloadURL: "{{ .Values.payloadURL | toString }}"
+    payloadURL: {{ .Values.payloadURL | toString }}
     {{- end }}
 
     {{- if .Values.contentType }}
-    contentType: "{{ .Values.contentType | toString }}"
+    contentType: {{ .Values.contentType | toString }}
     {{- end }}
 
     {{- if .Values.errorsAbove }}

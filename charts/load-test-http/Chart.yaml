@@ -1,15 +1,16 @@
 apiVersion: v2
 name: load-test-http
 version: 0.1.1
-description: An Iter8 experiment chart for benchmarking and validating HTTP services
+description: Load test, benchmark, and validate HTTP
 type: application
 keywords:
 - Iter8
 - HTTP
+- load test
 - benchmark
-- SLO validation
-- latency metrics
-- error metrics
+- validation
+- SLOs 
+- metrics
 - experiment
 home: https://iter8.tools
 sources:
@@ -19,5 +20,5 @@ maintainers:
   email: spartha@us.ibm.com
   url: https://researcher.watson.ibm.com/researcher/view.php?person=us-spartha
 icon: https://github.com/iter8-tools/iter8/raw/master/mkdocs/docs/images/favicon.png
-appVersion: "0.9"
+appVersion: 0.9
 
