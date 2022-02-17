@@ -115,7 +115,7 @@
   with:
     SLOs:
     {{- range $key, $value := .Values.SLOs }}
-    - metric: {{ $key | string }}
+    - metric: {{ $key | toString }}
       upperLimit: {{ $value | float64 }}
     {{- end }}
 {{- end }}
