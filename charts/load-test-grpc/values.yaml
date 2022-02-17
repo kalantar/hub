@@ -5,6 +5,67 @@
 
 ##################################
 
+### protoFile  Protocol Buffer .proto file that defines the gRPC service. 
+### Example: /user/me/helloworld.proto
+protoFile: null
+
+### protoURL  URL of Protocol Buffer .proto file that defines the gRPC service.
+### Example: https://user.me/helloworld.proto
+protoURL: null
+
+### protosetFile  .protoset file compiled from one or more .proto source files.
+### Example: /user/me/allworlds.protoset
+protosetFile: null
+
+### protosetURL  URL of .protoset file compiled from one or more .proto source files.
+### Example:  https://user.me/allworlds.protoset
+protosetURL: null
+
+### total Number of requests. 
+### If unspecified, a default value of 200 will be used.
+total:  null
+
+### rps Number of requests per second (RPS). 
+### If unspecified, or set to zero, then there will be no rate limit.
+### The rps will be distributed among all the workers (see concurrency).
+rps:  null
+
+### concurrency Number of workers to run concurrently.
+### If unspecified, a default value of 50 will be used.
+concurrency:  null
+
+### connections Number of connections to use.
+### Concurrency is distributed evenly among all the connections.
+### If unspecified, a default value of 1 will be used.
+connections:  null
+
+### duration Duration for the experiment to send requests. 
+### When duration is reached, experiment stops sending requests. 
+### If duration is specified, 'total' is ignored. Examples: 10s, 3m.
+duration: null
+
+### maxDuration Maximum duration for the experiment to send requests 
+### with 'total' setting respected. 
+### If duration is reached before 'total' requests are completed, 
+### experiment stops sending requests. Examples: 10s, 3m.
+maxDuration: null
+
+### streamInterval Interval between message sends in stream requests. Example: 1s
+streamInterval: null
+
+### streamCallDuration Duration after which experiment will close the stream in each streaming call. Example: 30s
+streamCallDuration: null
+
+### streamCallCount Count of messages sent, after which client will close the stream in each streaming call.
+streamCallCount: null
+
+### connectTimeout  Connection timeout duration for the initial connection dial.
+### If unspecified, a default value of 10s is used. Example: 20s
+connectTimeout: null
+
+### keepalive  Keepalive time duration. Only used if present and above 0s.
+keepalive: null
+
 ### host  Host and port of the gRPC service
 ### This field is required.
 host: null
@@ -14,62 +75,37 @@ host: null
 ### This field is required.
 call: null
 
-### protoURL  URL where the Protocol Buffer file that defines the gRPC service is located.
-protoURL: null
-
-### connectTimeout  Connection timeout duration for the initial connection dial.
-connectTimeout: 10s
-
-### total Number of requests to run.
-total:  200
-
-### maxDuration Maximum duration for the experiment to send requests 
-### with 'total' setting respected. 
-### If duration is reached before 'total' requests are completed, 
-### experiment stops sending requests. Examples: 10s, 3m.
-maxDuration: null
-
-### duration Duration for the experiment to send requests. 
-### When duration is reached, experiment stops sending requests. 
-### If duration is specified, 'total' is ignored. Examples: 10s, 3m.
-duration: null
-
-### rps   Rate limit in how many requsts per second (RPS) we perform in total. 
-### Default is no rate limit. The total RPS will be distributed among all the workers 
-### as specified by concurrency options.
-rps:  null
-
-### concurrency Number of workers to run concurrently.
-concurrency:  50
-
-### connections Number of connections to use.
-### Concurrency is distributed evenly among all the connections.
-connections:  1
-
-### data  Call data in the map[string]interface{} format.
-### When data is specified, it takes precedence over dataURL and binaryDataURL.
+### data  Call data YAML object.
 data: null
 
-### dataURL URL pointing to a JSON file whose contents are to be used as call data.
-### This takes precedence over binaryDataURL.
+### dataFile File path for call data JSON file.
+### Examples: /home/user/file.json or ./file.json.
+dataFile: null
+
+### dataURL URL of the call data JSON file.
 dataURL: null
 
-### binaryDataURL URL pointing to a binary file containing serialized binary message 
-### or multiple count-prefixed messages, to be used as call data.
+### binaryDataFile File path for the call data as serialized binary message or multiple count-prefixed messages.
+### Examples: /home/user/file.bin or ./file.bin
+binaryDataFile: null
+
+### binaryDataURL URL of the call data as serialized binary message or multiple count-prefixed messages.
 binaryDataURL: null
 
-### metadata  Call metadata in the map[string]string format.
-### When metadata is specified, it takes precedence over metadataURL.
+### metadata  Call metadata YAML object in the map[string]string format.
 metadata: null
 
-### metadataURL URL pointing to a JSON file whose contents are to be used as call metadata.
+### metadataFile File path for call metadata JSON file.
+### Examples: /home/user/metadata.json or ./metadata.json
+metadataFile: null
+
+### metadataURL URL of the call metadata JSON file.
 metadataURL: null
 
-### SLOs    A map of service level objectives (SLOs) that the app needs to satisfy.
-### Metrics collected during the load test are used to verify if the app satisfies SLOs.
-### Each SLO has a key which is the metric name, 
-### and a value which is the upper limit on the metric.
-### Valid metric names are error-rate, error-count, latency/max, latency/mean, 
-### latency/stddev, and latency/pX, where X is any latency percentile 
-### (i.e., any float value between 0 and 100).
+### SLOs  A map of service level objectives (SLOs) that the app needs to satisfy.
+### Keys are metric names, 
+### and values are acceptable upper limits for the metric.
+### Valid metric names are grpc/error-rate, grpc/error-count, 
+### grpc/latency/max, grpc/latency/mean, grpc/latency/stddev, and grpc/latency/pX, 
+### where X is any percentile (i.e., any float value between 0 and 100).
 SLOs: null

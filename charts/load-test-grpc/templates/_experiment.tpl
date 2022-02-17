@@ -4,24 +4,24 @@
 - task: gen-load-and-collect-metrics-grpc
   with:
 
+    {{- if .Values.protoFile }}
+    proto: {{ .Values.protoFile | toString }}
+    {{- end }}
+
     {{- if .Values.protoURL }}
     protoURL: {{ .Values.protoURL | toString }}
     {{- end }}
 
-    {{- if .Values.connectTimeout }}
-    connect-timeout: {{ .Values.connectTimeout | toString }}
+    {{- if .Values.protosetFile }}
+    protoset: {{ .Values.protosetFile | toString }}
+    {{- end }}
+
+    {{- if .Values.protosetURL }}
+    protosetURL: {{ .Values.protosetURL | toString }}
     {{- end }}
 
     {{- if .Values.total }}
     total: {{ .Values.total | int }}
-    {{- end }}
-
-    {{- if .Values.maxDuration }}
-    max-duration: {{ .Values.maxDuration | toString }}
-    {{- end }}
-
-    {{- if .Values.duration }}
-    duration: {{ .Values.duration | toString }}
     {{- end }}
 
     {{- if .Values.rps }}
@@ -36,13 +36,49 @@
     connections: {{ .Values.connections | int }}
     {{- end }}
 
+    {{- if .Values.duration }}
+    duration: {{ .Values.duration | toString }}
+    {{- end }}
+
+    {{- if .Values.maxDuration }}
+    max-duration: {{ .Values.maxDuration | toString }}
+    {{- end }}
+
+    {{- if .Values.streamInterval }}
+    stream-interval: {{ .Values.streamInterval | toString }}
+    {{- end }}
+
+    {{- if .Values.streamCallDuration }}
+    stream-call-duration: {{ .Values.streamCallDuration | toString }}
+    {{- end }}
+
+    {{- if .Values.streamCallCount }}
+    stream-call-count: {{ .Values.streamCallCount | int }}
+    {{- end }}
+
+    {{- if .Values.connectTimeout }}
+    connect-timeout: {{ .Values.connectTimeout | toString }}
+    {{- end }}
+
+    {{- if .Values.keepalive }}
+    keepalive: {{ .Values.keepalive | toString }}
+    {{- end }}
+
     {{- if .Values.data }}
     data:
 {{ toYaml .Values.data | indent 6 }}
     {{- end }}
 
+    {{- if .Values.dataFile }}
+    data-file: {{ .Values.dataFile | toString }}
+    {{- end }}
+
     {{- if .Values.dataURL }}
     dataURL: {{ .Values.dataURL | toString }}
+    {{- end }}
+
+    {{- if .Values.binaryDataFile }}
+    binary-file: {{ .Values.binaryDataFile | toString }}
     {{- end }}
 
     {{- if .Values.binaryDataURL }}
@@ -54,8 +90,17 @@
 {{ toYaml .Values.metadata | indent 6 }}
     {{- end }}
 
+    {{- if .Values.metadataFile }}
+    metadata-file: {{ .Values.metadataFile | toString }}
+    {{- end }}
+
     {{- if .Values.metadataURL }}
     metadataURL: {{ .Values.metadataURL | toString }}
+    {{- end }}
+
+    {{- if .Values.reflectMetadata }}
+    reflectMetadata:
+{{ toYaml .Values.reflectMetadata | indent 6 }}
     {{- end }}
 
     {{- ""}}
@@ -70,24 +115,8 @@
   with:
     SLOs:
     {{- range $key, $value := .Values.SLOs }}
-    {{- if or (regexMatch "error-rate" $key) (regexMatch "error-count" $key) }}
-    - metric: "built-in/grpc-{{ $key }}"
+    - metric: {{ $key | string }}
       upperLimit: {{ $value | float64 }}
-    {{- else if (regexMatch "latency/max" $key) }}
-    - metric: "built-in/grpc-latency/max"
-      upperLimit: {{ $value | float64 }}
-    {{- else if (regexMatch "latency/stddev" $key) }}
-    - metric: "built-in/grpc-latency/stddev"
-      upperLimit: {{ $value | float64 }}
-    {{- else if (regexMatch "latency/mean" $key) }}
-    - metric: "built-in/grpc-latency/mean"
-      upperLimit: {{ $value | float64 }}
-    {{- else if (regexMatch "^latency/p\\d+(?:\\.\\d)?$" $key) }}
-    - metric: "built-in/grpc-{{ $key }}"
-      upperLimit: {{ $value | float64 }}
-    {{- else }}
-    {{- fail "Invalid SLO metric specified" }}
-    {{- end }}
     {{- end }}
 {{- end }}
 {{ end }}

@@ -1,12 +1,12 @@
 apiVersion: v2
 name: load-test-grpc
 version: 0.1.1
-description: An Iter8 experiment chart for load testing gRPC services with SLO validation
+description: An Iter8 experiment chart for benchmarking and validating gRPC services
 type: application
 keywords:
 - Iter8
 - gRPC
-- load test
+- benchmark
 - SLO validation
 - latency metrics
 - error metrics
@@ -19,5 +19,5 @@ maintainers:
   email: spartha@us.ibm.com
   url: https://researcher.watson.ibm.com/researcher/view.php?person=us-spartha
 icon: https://github.com/iter8-tools/iter8/raw/master/mkdocs/docs/images/favicon.png
-appVersion: "v0.9"
+appVersion: "0.9"
 
