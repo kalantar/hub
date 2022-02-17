@@ -6,7 +6,7 @@ As you get started, you are in the best position to give us feedback on areas of
 our project that we need help with including:
 
 * Problems found during setup of Iter8
-* Gaps in our quick start tutorial and other documentation
+* Gaps in the "your first experiment" tutorial and other documentation
 * Bugs in our test and automation scripts
 
 If anything doesn't make sense, or doesn't work when you run it, please open a
@@ -141,29 +141,3 @@ Makefile target. Below is an example of a checklist:
 
 -->
 
-***
-
-## `MkDocs`
-Iter8 documentation uses [Mkdocs](https://www.mkdocs.org/user-guide/writing-your-docs/). The section on [linking to pages and images](https://www.mkdocs.org/user-guide/writing-your-docs/#writing-with-markdown) is especially useful for Iter8 documentation authors.
-
-### Serve Iter8 docs
-**Pre-requisite:** Python 3+. 
-
-Use a Python 3 virtual environment to locally serve Iter8 docs. Run the following commands from the top-level directory of the Iter8 repo.
-
-```shell
-cd mkdocs
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-mkdocs serve -s
-```
-
-Browse [http://localhost:8000](http://localhost:8000) to view your local Iter8 docs.
-
-### View live changes
-1. The overall structure of the documentation, as reflected in the nav tabs of [https://iter8.tools](https://iter8.tools), is located in the `iter8/mkdocs/mkdocs.yml` file.
-
-2. The markdown files for Iter8 docs are located under the `iter8/mkdocs/docs` folder.
-
-You will see live updates to [http://localhost:8000](http://localhost:8000) as you update the above files.
