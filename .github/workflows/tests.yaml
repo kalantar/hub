@@ -1,11 +1,11 @@
-name: tests
+name: integration tests
 
 on:
   pull_request:
   workflow_dispatch:
   
 jobs:
-  e2e-load-test-http:
+  integration-load-test-http:
     name: local httpbin tests
     runs-on: ubuntu-latest
     steps:
@@ -17,11 +17,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
     
-    - run: |
-        git clone https://github.com/sriumcp/iter8.git
-        cd iter8
-        git checkout initialv0.9
-        make install
+    - name: Install Iter8
+      run: |
+        wget https://github.com/iter8-tools/iter8/releases/download/v0.9.0/iter8-linux-amd64.tar.gz
+        tar -xvf iter8-linux-amd64.tar.gz
+        mv linux-amd64/iter8 /usr/local/bin
 
     - name: run httpbin
       run: |
@@ -46,9 +46,9 @@ jobs:
         set -e
         cd charts/load-test-http
         iter8 gen -c . --set url=http://127.0.0.1/get \
-                  --set SLOs.latency-p25=80 \
-                  --set SLOs.latency-p50=100 \
-                  --set SLOs.latency-'p95\.0'=200
+                  --set SLOs.http/latency-p25=80 \
+                  --set SLOs.http/latency-p50=100 \
+                  --set SLOs.http/latency-'p95\.0'=200
         cat experiment.yaml
         iter8 run
         iter8 assert -c completed -c nofailure -c slos
@@ -60,14 +60,14 @@ jobs:
         iter8 gen -c . --set url=http://127.0.0.1/post \
                   --set payloadURL=https://cdn.pixabay.com/photo/2021/09/08/17/58/poppy-6607526_1280.jpg \
                   --set contentType="image/jpeg" \
-                  --set SLOs.latency-p25=80 \
-                  --set SLOs.latency-p50=100 \
-                  --set SLOs.latency-'p95\.0'=200
+                  --set SLOs.http/latency-p25=80 \
+                  --set SLOs.http/latency-p50=100 \
+                  --set SLOs.http/latency-'p95\.0'=200
         cat experiment.yaml
         iter8 run
         iter8 assert -c completed -c nofailure -c slos
 
-  e2e-load-test-grpc:
+  integration-load-test-grpc:
     name: local grpc tests
     runs-on: ubuntu-latest
     steps:
@@ -79,11 +79,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
     
-    - run: |
-        git clone https://github.com/sriumcp/iter8.git
-        cd iter8
-        git checkout initialv0.9
-        make install
+    - name: Install Iter8
+      run: |
+        wget https://github.com/iter8-tools/iter8/releases/download/v0.9.0/iter8-linux-amd64.tar.gz
+        tar -xvf iter8-linux-amd64.tar.gz
+        mv linux-amd64/iter8 /usr/local/bin
 
     - name: run greeter
       run: |
@@ -91,21 +91,20 @@ jobs:
         cd grpc-go/examples/helloworld
         go build greeter_server/main.go
         ./main &
-        sleep 2
-        
+
     - name: load test grpc service method
       run: |
         set -e
         cd charts/load-test-grpc
         export LOG_LEVEL=trace
-        iter8 gen -c . --set-string host="127.0.0.1:50051" \
-                  --set-string call="helloworld.Greeter.SayHello" \
-                  --set-string protoURL="https://raw.githubusercontent.com/grpc/grpc-go/master/examples/helloworld/helloworld/helloworld.proto" \
+        iter8 gen -c . --set host="127.0.0.1:50051" \
+                  --set call="helloworld.Greeter.SayHello" \
+                  --set protoURL="https://raw.githubusercontent.com/grpc/grpc-go/master/examples/helloworld/helloworld/helloworld.proto" \
                   --set data.name="frodo" \
-                  --set SLOs.error-rate=0 \
-                  --set SLOs.latency/mean=50 \
-                  --set SLOs.latency/p90=100 \
-                  --set SLOs.latency/p'97\.5'=200
+                  --set SLOs.grpc/error-rate=0 \
+                  --set SLOs.grpc/latency/mean=50 \
+                  --set SLOs.grpc/latency/p90=100 \
+                  --set SLOs.grpc/latency/p'97\.5'=200
         echo "experiment ... "
         cat experiment.yaml
         iter8 run
