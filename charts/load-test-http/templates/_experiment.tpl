@@ -40,11 +40,11 @@
     {{- $percentiles := list }}
     {{- range $key, $value := .Values.SLOs }}
     {{- if (regexMatch "http/latency-p\\d+(?:\\.\\d)?$" $key) }}
-    {{- $percentiles = append $percentiles (trimPrefix "http/latency-p" $key | float64 ) }}    
+    {{- $percentiles = append $percentiles (trimPrefix "http/latency-p" $key | float64 ) }}
     {{- end }}
     {{- end }}
     {{- if $percentiles }}
-    percentiles: 
+    percentiles:
 {{ toYaml ($percentiles | uniq) | indent 4 }}
     {{- end }}
 
@@ -52,8 +52,8 @@
     versionInfo:
     - url: {{ required "A valid url value is required!" .Values.url | toString }}
     {{- if .Values.headers }}
-    headers:
-{{ toYaml .Values.headers | indent 6 }}
+      headers:
+{{ toYaml .Values.headers | indent 8 }}
     {{- end }}
 
 {{- if .Values.SLOs }}
