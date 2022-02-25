@@ -1,0 +1,22 @@
+apiVersion: v2
+name: ocm-validate
+version: 0.0.1
+description: An Iter8 experiment chart for validating deployment to managed clusters
+type: application
+keywords:
+- Iter8
+- validation test
+- SLO validation
+- experiment
+- canary
+- progressive rollout
+home: https://iter8.tools
+sources:
+- https://github.com/iter8-tools/iter8
+maintainers:
+- name: Michael Kalantar
+  email: kalantar@us.ibm.com
+  url: https://researcher.watson.ibm.com/researcher/view.php?person=us-kalantar
+icon: https://github.com/iter8-tools/iter8/raw/master/mkdocs/docs/images/favicon.png
+appVersion: "0.8"
+

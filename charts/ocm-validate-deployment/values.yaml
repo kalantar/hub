@@ -1,0 +1,27 @@
+### Defaults values and behaviors of various parameters that can be set
+### for this experiment chart.
+
+### Lines where values can be set start with a single #
+### In contrast, description lines like this one start with ### 
+
+##################################
+
+### candidate   Name of the AppBundle defining the candidate version
+### This field is required.
+
+# candidate: candidate
+
+### timeout   The maximum amount of time to wait for the SLOs to be satisfied.
+### Value can be any Go duration string (https://pkg.go.dev/maze.io/x/duration#ParseDuration)
+
+# timeout: 5s
+
+### SLOs    A map of service level objectives (SLOs) that the app needs to satisfy.
+### Metrics collected during the load test are used to verify if the app satisfies SLOs.
+### Each SLO has a key which is the metric name, 
+### and a value which is the upper limit on the metric.
+### THe only valid metric names is error-rate.
+
+# SLOs:
+  # error-rate: 0 # error rate must be 0
+
