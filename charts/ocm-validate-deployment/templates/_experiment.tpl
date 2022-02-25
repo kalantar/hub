@@ -1,4 +1,4 @@
-{{ define "ocm-validate.experiment" -}}
+{{ define "experiment" -}}
 # task 1: determine number of failed deployments (error-count) and ratio of expected (error-rate)
 # Generates the ocm/error-count and ocm/error-rate metrics.
 - task: ocm-validate-deployment
@@ -16,7 +16,7 @@
     SLOs:
     {{- range $key, $value := .Values.SLOs }}
     {{- if or (regexMatch "error-rate" $key) (regexMatch "error-count" $key) }}
-    - metric: "build-in/{{ $key }}"
+    - metric: "{{ $key }}"
       upperLimit: {{ $value }}
     {{- else }}
     {{- fail "Invalid SLO metric specified" }}

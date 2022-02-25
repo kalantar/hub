@@ -18,5 +18,5 @@ maintainers:
   email: kalantar@us.ibm.com
   url: https://researcher.watson.ibm.com/researcher/view.php?person=us-kalantar
 icon: https://github.com/iter8-tools/iter8/raw/master/mkdocs/docs/images/favicon.png
-appVersion: "0.8"
+appVersion: "v0.9"
 
