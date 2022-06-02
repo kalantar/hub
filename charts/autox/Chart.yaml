@@ -1,17 +1,12 @@
 apiVersion: v2
-name: load-test-http
-version: 0.9.0
-description: Load test, benchmark, and validate HTTP
+name: autox
+version: 0.1.0
+description: Automatically launch Iter8 experiments in Kubernetes
 type: application
 keywords:
 - Iter8
-- HTTP
-- load test
-- benchmark
-- validation
-- SLOs 
-- metrics
 - experiment
+- auto launch
 home: https://iter8.tools
 sources:
 - https://github.com/iter8-tools/iter8
@@ -20,5 +15,5 @@ maintainers:
   email: spartha@us.ibm.com
   url: https://researcher.watson.ibm.com/researcher/view.php?person=us-spartha
 icon: https://github.com/iter8-tools/iter8/raw/master/mkdocs/docs/images/favicon.png
-appVersion: v0.9
+appVersion: v0.10
 
