@@ -1,0 +1,61 @@
+{{- range $ns := .Values.namespaces }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ $.Release.Name }}-watch-resources
+  namespace: {{ $ns }}
+  {{ template "iter8-abn.labels" $ }}
+rules:
+{{- range $r := $.Values.resources }}
+{{- if eq $r "deployments" }}
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["watch", "list"]
+{{- end }}
+{{- if eq $r "services" }}
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["watch", "list"]
+{{- end }}
+{{- end }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ $.Release.Name }}-watch-resources
+  namespace: {{ $ns }}
+  {{ template "iter8-abn.labels" $ }}
+subjects:
+- kind: ServiceAccount
+  name: {{ $.Release.Name }}
+  namespace: {{ $.Release.Namespace }}
+roleRef:
+  kind: Role
+  name: {{ $.Release.Name }}-watch-resources
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ $.Release.Name }}-metricstore
+  {{ template "iter8-abn.labels" $ }}
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["create", "list", "get", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ $.Release.Name }}-metricstore
+  {{ template "iter8-abn.labels" $ }}
+subjects:
+- kind: ServiceAccount
+  name: {{ $.Release.Name }}
+  namespace: {{ $.Release.Namespace }}
+roleRef:
+  kind: Role
+  name: {{ $.Release.Name }}-metricstore
+  apiGroup: rbac.authorization.k8s.io

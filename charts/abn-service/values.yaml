@@ -1,0 +1,14 @@
+### ABn service image
+image: iter8/iter8-abn:v0.11
+
+service: 
+  port: 50051
+
+### comma separated list of resource types to watch
+### valid types include:
+###    deployments - apps.v1.deployments
+###    services - v1.services
+resources: null
+
+### comma separated list of namespaces in which to watch resources
+namespaces: null
