@@ -12,3 +12,5 @@ resources: null
 
 ### comma separated list of namespaces in which to watch resources
 namespaces: null
+
+logLevel: info

@@ -20,7 +20,7 @@ spec:
       - name: iter8-abn
         image: {{ .Values.image }}
         command: ["/bin/iter8"]
-        args: ["abn"]
+        args: ["abn", "-l", "{{ .Values.logLevel }}"]
         env:
         - name: WATCHER_CONFIG
           value: /config/abn-config.yaml
