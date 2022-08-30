@@ -2,6 +2,35 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}
+  {{ template "iter8-autox.labels" . }}
 data:
-  triggers.yaml: |
-{{ .Values.triggers | toYaml | indent 4 }}
+  resource-config.yaml: | 
+    resources: 
+    {{- range $r := .Values.resources }}
+    {{- if eq $r "deployments" }}
+    - group: apps
+      version: v1
+      resource: deployments
+    {{- end }}
+    {{- if eq $r "services" }}
+    - version: v1
+      resource: services
+    {{- end }}
+    {{- if eq $r "ksvcs" }}
+    - group: serving.knative.dev
+      version: v1
+      resource: services
+    {{- end }}
+    {{- end }}
+    namespaces:
+{{ toYaml .Values.namespaces | indent 4 }}
+  chart-group-config.yaml: |
+    {{- range $name, $chartGroups := .Values.chartGroups }}
+    - name: {{ $name }}
+      charts:
+      {{- range $cg := $chartGroups }}
+        - repo: {{ $cg.repo }}
+          name: {{ $cg.chartName }}
+          valuesFileURL: {{ $cg.valuesFileURL }}
+      {{- end }}
+    {{- end }}

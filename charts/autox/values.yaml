@@ -1,2 +1,13 @@
-autoxImage: iter8/autox:0.10
-triggers: []
+### AutoX service image
+image: iter8/iter8-autox:v0.11
+
+### comma separated list of resource types to watch
+### valid types include:
+###    deployments - apps.v1.deployments
+###    services - v1.services
+resources: null
+
+### comma separated list of namespaces in which to watch resources
+namespaces: null
+
+logLevel: info

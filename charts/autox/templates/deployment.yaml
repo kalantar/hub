@@ -2,27 +2,35 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}
+  {{ template "iter8-autox.labels" . }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ .Release.Name }}
+      app.kubernetes.io/name: {{ template "iter8-autox.name" . }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ .Release.Name }}
+        app.kubernetes.io/name: {{ template "iter8-autox.name" . }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
-      serviceAccountName: {{ .Release.Name }} 
+      serviceAccountName: {{ .Release.Name }}
       containers:
-      - name: {{ .Release.Name }}
-        image: {{ .Values.autoxImage }}
+      - name: iter8-autox
+        image: {{ .Values.image }}
+        command: ["/bin/iter8"]
+        args: ["autox", "-l", "{{ .Values.logLevel }}"]
+        env:
+        - name: RESOURCE_CONFIG
+          value: /config/resource-config.yaml
+        - name: CHART_GROUP_CONFIG
+          value: /config/group-config.yaml
         volumeMounts:
-        - name: triggers
+        - name: autox-config
           mountPath: "/config"
           readOnly: true
       volumes:
-      - name: triggers
+      - name: autox-config
         configMap:
           name: {{ .Release.Name }}
