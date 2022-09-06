@@ -19,6 +19,7 @@ spec:
       containers:
       - name: iter8-autox
         image: {{ .Values.image }}
+        imagePullPolicy: Always
         command: ["/bin/iter8"]
         args: ["autox", "-l", "{{ .Values.logLevel }}"]
         env:
