@@ -16,6 +16,11 @@ data:
     - version: v1
       resource: services
     {{- end }}
+    {{- if eq $r "ksvcs" }}
+    - group: serving.knative.dev
+      version: v1
+      resource: services
+    {{- end }}
     {{- end }}
     namespaces:
 {{ toYaml .Values.namespaces | indent 4 }}
