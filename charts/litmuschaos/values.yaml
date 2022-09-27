@@ -1,0 +1,8 @@
+# Type of kubernetes workload
+appkind: deployment
+
+# Total Chaos Duration
+totalChaosDuration: "60"
+
+# Chaos Interval
+chaosInterval: "4"
