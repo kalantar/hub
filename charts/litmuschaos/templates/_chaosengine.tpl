@@ -16,8 +16,8 @@ spec:
       spec:
         components:
           env:
-          - name: TOTAL_CHAOS_DURATION -- expose as Helm chart value
+          - name: TOTAL_CHAOS_DURATION
             value: {{ required ".Values.totalChaosDuration is required!" .Values.totalChaosDuration | quote }}
-          - name: CHAOS_INTERVAL -- expose as a Helm chart value
+          - name: CHAOS_INTERVAL
             value: {{ required ".Values.chaosInterval is required!" .Values.chaosInterval | quote }}
 {{- end }}
