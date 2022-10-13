@@ -5,7 +5,7 @@ description:
     Deletes a pod belonging to a deployment/statefulset/daemonset
 kind: ChaosExperiment
 metadata:
-  name: {{ .Chart.Name }}-{{ .Release.Name }}
+  name: pod-delete
   labels:
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/component: chaosexperiment

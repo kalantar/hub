@@ -12,7 +12,7 @@ spec:
   engineState: 'active'
   chaosServiceAccount: {{ .Chart.Name }}-{{ .Release.Name }}
   experiments:
-    - name: {{ .Chart.Name }}-{{ .Release.Name }}
+    - name: pod-delete
       spec:
         components:
           env:
