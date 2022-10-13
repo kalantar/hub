@@ -4,7 +4,6 @@ kind: ServiceAccount
 metadata:
   name: {{ .Chart.Name }}-{{ .Release.Name }}
   labels:
-    name: pod-delete
     app.kubernetes.io/part-of: litmus
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -12,7 +11,6 @@ kind: Role
 metadata:
   name: {{ .Chart.Name }}-{{ .Release.Name }}
   labels:
-    name: pod-delete
     app.kubernetes.io/part-of: litmus
 rules:
 - apiGroups: [""]
@@ -36,7 +34,6 @@ kind: RoleBinding
 metadata:
   name: {{ .Chart.Name }}-{{ .Release.Name }}
   labels:
-    name: pod-delete
     app.kubernetes.io/part-of: litmus
 roleRef:
   apiGroup: rbac.authorization.k8s.io

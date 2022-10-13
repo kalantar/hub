@@ -10,9 +10,9 @@ spec:
     appkind: "{{ .Values.appkind }}"
   # It can be active/stop
   engineState: 'active'
-  chaosServiceAccount: pod-delete
+  chaosServiceAccount: {{ .Chart.Name }}-{{ .Release.Name }}
   experiments:
-    - name: pod-delete
+    - name: {{ .Chart.Name }}-{{ .Release.Name }}
       spec:
         components:
           env:

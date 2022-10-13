@@ -7,7 +7,6 @@ kind: ChaosExperiment
 metadata:
   name: {{ .Chart.Name }}-{{ .Release.Name }}
   labels:
-    name: pod-delete
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/component: chaosexperiment
     app.kubernetes.io/version: {{ .Chart.AppVersion }}
@@ -85,7 +84,6 @@ spec:
       value: 'parallel'
       
     labels:
-      name: pod-delete
       app.kubernetes.io/part-of: litmus
       app.kubernetes.io/component: experiment-job
       app.kubernetes.io/version: {{ .Chart.AppVersion }}
