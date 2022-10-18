@@ -14,12 +14,15 @@
 {{- end }}
 # task: send a GitHub notification
 - task: notify
+{{- if .if }}
+  if: {{ .if | quote }}
+{{- end }}
   with:
     url: https://api.github.com/repos/{{ .owner }}/{{ .repo }}/dispatches
     method: POST
     headers:
       Authorization: token {{ .token }}
       Accept: application/vnd.github+json
-    payloadTemplateURL: {{ default "https://raw.githubusercontent.com/iter8-tools/hub/blob/main/templates/_payload-github.tpl" .payloadTemplateURL }}
+    payloadTemplateURL: {{ default "https://raw.githubusercontent.com/iter8-tools/iter8/v0.11.10/charts/iter8/templates/_payload-github.tpl" .payloadTemplateURL }}
     softFailure: {{ default true .softFailure }}
 {{ end }}
