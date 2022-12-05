@@ -1,36 +1,35 @@
 apiVersion: v1
-kind: ConfigMap
+kind: Secret
 metadata:
   name: {{ .Release.Name }}
   {{ template "iter8-autox.labels" . }}
-data:
-  resource-config.yaml: | 
-    resources: 
-    {{- range $r := .Values.resources }}
-    {{- if eq $r "deployments" }}
-    - group: apps
-      version: v1
-      resource: deployments
+stringData:
+  config.yaml: |
+    specs:
+    {{- range $releaseGroupSpecName, $releaseGroupSpec := .Values.releaseGroupSpecs }}
+      {{ $releaseGroupSpecName }}:
+        trigger:
+          group: {{ $releaseGroupSpec.trigger.group }}
+          version: {{ $releaseGroupSpec.trigger.version }}
+          resource: {{ $releaseGroupSpec.trigger.resource }}
+          name: {{ $releaseGroupSpec.trigger.name }}
+          namespace: {{ $releaseGroupSpec.trigger.namespace }}
+        releaseSpecs:
+        {{- range $releaseSpecName, $releaseSpec := $releaseGroupSpec.releaseSpecs }}
+          {{ $releaseSpecName }}:
+            repoURL: {{ $releaseSpec.repoURL }}
+            name: {{ $releaseSpec.name }}
+            values: {{ $releaseSpec.values }}
+            version: {{ $releaseSpec.version }}
+        {{- end }}
     {{- end }}
-    {{- if eq $r "services" }}
-    - version: v1
-      resource: services
-    {{- end }}
-    {{- if eq $r "ksvcs" }}
-    - group: serving.knative.dev
-      version: v1
-      resource: services
-    {{- end }}
-    {{- end }}
-    namespaces:
-{{ toYaml .Values.namespaces | indent 4 }}
-  chart-group-config.yaml: |
-    {{- range $name, $chartGroups := .Values.chartGroups }}
-    - name: {{ $name }}
-      charts:
-      {{- range $cg := $chartGroups }}
-        - repo: {{ $cg.repo }}
-          name: {{ $cg.chartName }}
-          valuesFileURL: {{ $cg.valuesFileURL }}
-      {{- end }}
-    {{- end }}
+{{- range $releaseGroupSpecName, $releaseGroupSpec := .Values.releaseGroupSpecs }}
+{{ $hash := print $releaseGroupSpec | sha256sum | trunc 5 }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: autox-{{ $releaseGroupSpecName }}-{{ $hash }}
+  labels:
+    iter8.tools/autox-group: {{ $releaseGroupSpecName }}
+{{- end }}

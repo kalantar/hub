@@ -23,15 +23,13 @@ spec:
         command: ["/bin/iter8"]
         args: ["autox", "-l", "{{ .Values.logLevel }}"]
         env:
-        - name: RESOURCE_CONFIG
-          value: /config/resource-config.yaml
-        - name: CHART_GROUP_CONFIG
-          value: /config/group-config.yaml
+        - name: CONFIG
+          value: /config/config.yaml
         volumeMounts:
         - name: autox-config
           mountPath: "/config"
           readOnly: true
       volumes:
       - name: autox-config
-        configMap:
+        secret:
           name: {{ .Release.Name }}
