@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}
+  namespace: argocd
   {{ template "iter8-autox.labels" . }}
 spec:
   replicas: 1
@@ -13,7 +14,7 @@ spec:
       labels:
         app.kubernetes.io/name: {{ template "iter8-autox.name" . }}
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
     spec:
       serviceAccountName: {{ .Release.Name }}
       containers:
@@ -32,4 +33,4 @@ spec:
       volumes:
       - name: autox-config
         secret:
-          name: {{ .Release.Name }}
+          secretName: {{ .Release.Name }}
