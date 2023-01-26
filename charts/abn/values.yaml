@@ -5,6 +5,6 @@ service:
   port: 50051
 
 ### map of applications
-applications: null
+apps: null
 
 logLevel: info

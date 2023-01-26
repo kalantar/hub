@@ -5,7 +5,7 @@ metadata:
   {{ template "iter8-abn.labels" . }}
 data:
   abn-config.yaml: | 
-  {{- range $ns, $apps := .Values.applications }}
+  {{- range $ns, $apps := .Values.apps }}
     {{ $ns }}:
       {{- range $nm, $config := $apps }}
       {{ $nm }}:
