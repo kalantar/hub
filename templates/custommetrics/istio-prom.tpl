@@ -85,7 +85,7 @@ metrics:
       }[{{ .elapsedTimeSeconds }}s])) or on() vector(0))/(sum(last_over_time(istio_requests_total{
         {{- template "labels" . }}
       }[{{ .elapsedTimeSeconds }}s])) or on() vector(0))
-  jqExpression: .data.result.[0].value.[1]
+  jqExpression: .data.result.[0].value.[1] | tonumber
 - name: latency-mean
   type: gauge
   description: |
