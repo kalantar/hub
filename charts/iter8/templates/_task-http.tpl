@@ -3,8 +3,17 @@
 {{- if not . }}
 {{- fail "http values object is nil" }}
 {{- end }}
+{{/* url must be defined or a url must be defined for each endpoint */}}
 {{- if not .url }}
-  {{- fail "please specify the url parameter" }}
+{{- if .endpoints }}
+{{- range $endpointID, $endpoint := .endpoints }}
+{{- if not $endpoint.url }}
+{{- fail (print "endpoint \"" (print $endpointID "\" does not have a url parameter")) }}
+{{- end }}
+{{- end }}
+{{- else }}
+{{- fail "please set the url parameter or the endpoints parameter" }}
+{{- end }}
 {{- end }}
 {{- /**************************/ -}}
 {{- if or .warmupNumRequests .warmupDuration }}
@@ -43,8 +52,17 @@
 # task: download payload from payload URL
 - run: |
     curl -o payload.dat {{ $vals.payloadURL }}
-{{- $pf := dict "payloadFile" "payload.dat" }}
-{{- $vals = mustMerge $pf $vals }}
+{{- $_ := set $vals "payloadFile" "payload.dat" }}
+{{- end }}
+# handle endpoints
+{{- range $endpointID, $endpoint := $vals.endpoints }}
+{{- if $endpoint.payloadURL }}
+{{- $payloadFile := print $endpointID "_payload.dat" }}
+# task: download payload from payload URL for endpoint
+- run: |
+    curl -o {{ $payloadFile }} {{ $endpoint.payloadURL }}
+{{- $_ := set $endpoint "payloadFile" $payloadFile }}
+{{- end }}
 {{- end }}
 {{/* Write the main task */}}
 # task: generate HTTP requests for app
