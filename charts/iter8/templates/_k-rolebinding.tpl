@@ -1,5 +1,4 @@
 {{- define "k.rolebinding" -}}
-{{- if not .Values.serviceAccountName }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -33,7 +32,6 @@ roleRef:
   kind: Role
   name: {{ .Release.Name }}-ready
   apiGroup: rbac.authorization.k8s.io
-{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

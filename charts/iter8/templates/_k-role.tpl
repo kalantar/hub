@@ -1,5 +1,4 @@
 {{- define "k.role" -}}
-{{- if not .Values.serviceAccountName }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -52,7 +51,6 @@ rules:
   resourceNames: [{{ .Values.ready.chaosengine | quote }}]
   resources: ["chaosengines"]
   verbs: ["get"]
-{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
