@@ -1,0 +1,49 @@
+name: Version bump check
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: [charts/abn, charts/autox, charts/iter8, charts/litmuschaos]
+    name: Test changed-files
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get modified files in the ${{ matrix.version }} folder
+        id: modified-files
+        uses: tj-actions/changed-files@v35
+        with:
+          files: ${{ matrix.version }}
+
+      - name: Run step if any file(s) in the ${{ matrix.version }} folder was modified
+        if: steps.modified-files.outputs.any_modified == 'true'
+        run: |
+          chartFile="${{ matrix.version }}/Chart.yaml"
+
+          # Get git diff of the Chart.yaml between the main branch and PR branch
+          gitDiff=$(git diff origin/main..HEAD $chartFile)
+
+          # Deletion and addition in Chart.yaml
+          delete=$'--- a/'
+          add=$'\n+++ b/'
+          deleteAddChart="$delete$chartFile$add$chartFile"
+
+          # Deletion and addition of version in Chart.yaml
+          deleteVersion="-version:"
+          addVersion="+version:"
+
+          if [[ "$gitDiff" == *"$deleteAddChart"* ]] && [[ "$gitDiff" == *$deleteVersion* ]] && [[ "$gitDiff" == *$addVersion* ]]; 
+          then
+            echo "version in $chartFile has been modified"
+          else
+            echo "version in $chartFile needs to be modified"
+            exit 1
+          fi

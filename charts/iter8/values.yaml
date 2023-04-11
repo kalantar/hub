@@ -11,3 +11,12 @@ logLevel: info
 
 abnmetrics:
   endpoint: iter8-abn:50051
+
+### Resource limits
+resources:
+  requests:
+    memory: "64Mi"
+    cpu: "250m"
+  limits:
+    memory: "128Mi"
+    cpu: "500m"
