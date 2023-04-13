@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.modelName }}
+  labels:
+    app.kubernetes.io/managed-by: iter8
+    iter8.tools/kind: routemap
+    iter8.tools/version: {{ .Values.iter8Version }}
+data:
+  strSpec: |
+    versions: 
+{{- range $i, $v := .Values.modelVersions }}
+    - weight: {{ default $v.weight 100 }}
+      resources:
+      - gvrShort: cm
+        name: {{ $v.name }}
+        namespace: {{ default $v.namespace "modelmesh-serving" }}
+      - gvrShort: isvc
+        name: {{ $v.name }}
+        namespace: {{ default $v.namespace "modelmesh-serving" }}
+{{- end }}
+    routingTemplates:
+    {{ .Values.trafficStrategy }}:
+      gvrShort: vs
+      template: |
+        apiVersion: networking.istio.io/v1beta1
+        kind: VirtualService
+        metadata:
+          name: {{ .Values.modelName }}
+        spec:
+          gateways:
+          - {{ .Values.gatewayName }}
+          hosts:
+        {{- with (index .Values.modelVersions 0) }}
+          - {{ $.Values.serviceName }}.{{ default .namespace "modelmesh-serving" }}
+          - {{ $.Values.serviceName }}.{{ default .namespace "modelmesh-serving" }}.svc
+          - {{ $.Values.serviceName }}.{{ default .namespace "modelmesh-serving" }}.svc.cluster.local
+        {{- end }}
+          http:
+          - route:
+{{- range $i, $v := .Values.modelVersions }}
+           {{ `{{- if gt (index .Weights ` }}{{ print $i }}{{ `) 0 }}`}}
+            - destination:
+                host: {{ $.Values.modelmeshServingEndpoint }}
+                port:
+                  number: {{ $.Values.modelmeshServingPort }}
+             {{` {{- if gt (index .Weights `}}{{ print $i }}{{ `) 0 }}`}}
+              weight: {{ $v.weight }}
+             {{` {{- end }}`}}
+              headers:
+                request:
+                  set:
+                    mm-vmodel-id: "{{ $v.name }}" 
+           {{ `{{- end }}`}}     
+{{- end }}
+immutable: true
