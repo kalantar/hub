@@ -1,9 +1,0 @@
-{{- range $i, $v := .Values.modelVersions }}
-piVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .name }}-weight-config
-  labels:
-    iter8.tools/watch: "true"
----
-{{- end }}

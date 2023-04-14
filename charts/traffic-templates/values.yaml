@@ -1,15 +1,3 @@
-targetEnv: kserve-modelmesh
-externalAccess: true
-serviceName: mm-external
-gatewayName: mm-external-gateway
-trafficStrategy: blue-green
-modelName: wisdom
-modelVersions:
-- name: wisdom-primary
-- name: wisdom-canary
-  namespace: modelmesh-serving
-  weight: 50
-
 ### default model mesh serving endpoints
 modelmeshServingEndpoint: modelmesh-serving.modelmesh-serving.svc.cluster.local
 modelmeshServingPort: 8033

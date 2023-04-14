@@ -1,0 +1,63 @@
+{{- if eq "external" .Values.templateName }}
+{{ include "external.service" . }}
+---
+{{ include "external.gateway" . }}
+
+{{- else if eq "bg-initialize" .Values.templateName }}
+{{ include "initialize.vs-blue-green" . }}
+---
+{{ include "initialize.routemap" . }}
+---
+{{- if eq "blue-green" .Values.trafficStrategy}}
+{{- $primary := dict "name" (printf "%s-0" .Values.modelName) }}
+{{- if .Values.modelVersions }}
+{{- if (index .Values.modelVersions 0).name }}
+{{- $primary := set $primary "name" (index .Values.modelVersions 0).name }}
+{{- end }}
+{{- end }}
+{{ include "create.weight-config" $primary }}
+{{- end }}
+
+{{- else if eq "deploy-candidate" .Values.templateName }}
+{{- if eq "blue-green" .Values.trafficStrategy}}
+{{- $candidate := dict "name" (printf "%s-1" .Values.modelName) }}
+{{- if .Values.modelVersions }}
+{{- if (index .Values.modelVersions 1).name }}
+{{- $candidate := set $candidate "name" (index .Values.modelVersions 1).name }}
+{{- end }}
+{{- end }}
+{{ include "create.weight-config" $candidate }}
+{{- end }}
+
+{{- else if eq "modify-weights" .Values.templateName }}
+{{- if eq "blue-green" .Values.trafficStrategy}}
+{{- range $i, $v := .Values.modelVersions }}
+{{- $version := dict "name" (default (printf "%s-%d" $.Values.modelName $i) (index $.Values.modelVersions 0).name) "weight" $v.weight }}
+{{ include "create.weight-config" $version }}
+---
+{{- end }}
+{{- end }}
+
+{{ else if eq "promote-candidate" .Values.templateName }}
+{{- if eq "blue-green" .Values.trafficStrategy}}
+{{- $primary := dict "name" (printf "%s-0" .Values.modelName) }}
+{{- if .Values.modelVersions }}
+{{- if (index .Values.modelVersions 0).name }}
+{{- $primary := set $primary "name" (index .Values.modelVersions 0).name }}
+{{- end }}
+{{- end }}
+{{ include "create.weight-config" $primary }}
+{{- end }}
+
+{{ else if eq "delete-candidate" .Values.templateName }}
+{{- if eq "blue-green" .Values.trafficStrategy}}
+{{- $candidate := dict "name" (printf "%s-1" .Values.modelName) }}
+{{- if .Values.modelVersions }}
+{{- if (index .Values.modelVersions 1).name }}
+{{- $candidate := set $candidate "name" (index .Values.modelVersions 1).name }}
+{{- end }}
+{{- end }}
+{{ include "create.weight-config" $candidate }}
+{{- end }}
+
+{{- end }}
