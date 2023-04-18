@@ -24,7 +24,7 @@
       {{- $v = set $v "name" (default (printf "%s-%d" $.Values.modelName $i) $ver.name) }}
       {{- $v = set $v "namespace" (default $defaultNamespace $ver.namespace) }}
       {{- $v = set $v "weight" (default $defaultWeight $ver.weight) }}
-      {{- $v = set $v "match" (default $defaultMatch) $ver.match }}
+      {{- $v = set $v "match" (default $defaultMatch $ver.match) }}
       {{- $mV = append $mV $v }}
     {{- end }}
   {{- else }}

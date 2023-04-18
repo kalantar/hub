@@ -21,12 +21,13 @@
   {{- if eq "blue-green" .Values.trafficStrategy}}
     {{- range $i, $v := $versions }}
       {{ include "create.weight-config" (unset $v "weight") }}
+---
     {{- end }}
   {{- end }}
 
 {{- else if eq "modify-weights" .Values.templateName }}
   {{- if eq "blue-green" .Values.trafficStrategy}}
-    {{- range $i, $v := $versions }}
+    {{- range $i, $v := .Values.modelVersions }}
       {{ include "create.weight-config" $v }}
 ---
     {{- end }}
