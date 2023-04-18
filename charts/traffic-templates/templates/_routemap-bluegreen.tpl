@@ -1,4 +1,5 @@
 {{- define "routemap-bluegreen" }}
+{{- $versions := include "resolve.modelVersions" . | mustFromJson }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -10,16 +11,16 @@ metadata:
 data:
   strSpec: |
     versions: 
-{{- range $i, $v := .Values.modelVersions }}
-    - weight: {{ default 100 $v.weight }}
+    {{- range $i, $v := $versions }}
+    - weight: {{ $v.weight }}
       resources:
       - gvrShort: cm
-        name: {{ default (printf "%s-%d" $i) $.Values.modelName $v.name }}-weight-config
-        namespace: {{ default "modelmesh-serving" $v.namespace }}
+        name: {{ $v.name }}-weight-config
+        namespace: {{ $v.namespace }}
       - gvrShort: isvc
-        name: {{ default (printf "%s-%d" $.Values.modelName $i) $v.name }}
-        namespace: {{ default "modelmesh-serving" $v.namespace }}
-{{- end }}
+        name: {{ $v.name }}
+        namespace: {{ $v.namespace }}
+    {{- end }}
     routingTemplates:
       {{ .Values.trafficStrategy }}:
         gvrShort: vs
@@ -48,9 +49,9 @@ data:
                 headers: 
                   request:
                     set:
-                      mm-vmodel-id: "{{ default (printf "%s-0" .Values.modelName) (index .Values.modelVersions 0).name }}" 
+                      mm-vmodel-id: "{{ (index $versions 0).name }}" 
               # other models
-{{- range $i, $v := (rest .Values.modelVersions) }}
+              {{- range $i, $v := (rest $versions) }}
               {{ `{{- if gt (index .Weights ` }}{{ print (add1 $i) }}{{ `) 0 }}`}}
               - destination:
                   host: {{ $.Values.modelmeshServingEndpoint }}
@@ -60,8 +61,8 @@ data:
                 headers:
                   request:
                     set:
-                      mm-vmodel-id: "{{ default (printf "%s-%d" $.Values.modelName (add1 $i)) $v.name }}" 
+                      mm-vmodel-id: "{{ (index $versions (add1 $i)).name }}" 
               {{ `{{- end }}`}}     
-{{- end }}
+              {{- end }}
 immutable: true
 {{- end }}

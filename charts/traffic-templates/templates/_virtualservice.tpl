@@ -1,4 +1,5 @@
 {{- define "initial.virtualservice" }}
+{{- $versions := include "resolve.modelVersions" . | mustFromJson }}
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
@@ -19,5 +20,5 @@ spec:
       headers:
         request:
           set:
-            mm-vmodel-id: {{ default "wisdom-0" (index .Values.modelVersions 0).name }}
+            mm-vmodel-id: {{ (index $versions 0).name }}
 {{- end }}

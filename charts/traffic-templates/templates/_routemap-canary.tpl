@@ -1,4 +1,5 @@
 {{- define "routemap-canary" }}
+{{- $versions := include "resolve.modelVersions" . | mustFromJson }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -10,12 +11,12 @@ metadata:
 data:
   strSpec: |
     versions: 
-{{- range $i, $v := .Values.modelVersions }}
+    {{- range $i, $v := .Values.modelVersions }}
     - resources:
       - gvrShort: isvc
         name: {{ default (printf "%s-%d" $.Values.modelName $i) $v.name }}
         namespace: {{ default "modelmesh-serving" $v.namespace }}
-{{- end }}
+    {{- end }}
     routingTemplates:
       {{ .Values.trafficStrategy }}:
         gvrShort: vs
@@ -32,9 +33,9 @@ data:
             - {{ default "mm-external" .Values.serviceName }}.{{ default "modelmesh-serving" .Values.serviceNamespace }}.svc
             - {{ default "mm-external" .Values.serviceName }}.{{ default "modelmesh-serving" .Values.serviceNamespace }}.svc.cluster.local
             http:
-{{- range $i, $v := (rest .Values.modelVersions) }}
+            {{- range $i, $v := (rest $versions) }}
             {{ `{{- if gt (index .Weights ` }}{{ print (add1 $i) }}{{ `) 0 }}`}}
-              match:
+            - match:
 {{ toYaml $v.match | indent 16 }}
               route:
               - destination:
@@ -44,9 +45,9 @@ data:
                 headers:
                   request:
                     set:
-                      mm-vmodel-id: "{{ default (printf "%s-%d" $.Values.modelName (add1 $i)) $v.name }}"
+                      mm-vmodel-id: "{{ (index $versions (add1 $i)).name }}"
             {{ `{{- end }}`}}
-{{- end }}
+            {{- end }}
             - route:
               - destination:
                   host: {{ $.Values.modelmeshServingEndpoint }}
@@ -55,6 +56,6 @@ data:
                 headers:
                   request:
                     set:
-                      mm-vmodel-id: "{{ default (printf "%s-0" .Values.modelName) (index .Values.modelVersions 0).name }}"
+                      mm-vmodel-id: "{{ (index $versions 0).name }}"
 immutable: true
 {{- end }}

@@ -1,4 +1,5 @@
 {{- define "routemap-mirror" }}
+{{- $versions := include "resolve.modelVersions" . | mustFromJson }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -10,15 +11,15 @@ metadata:
 data:
   strSpec: |
     versions: 
-{{- range $i, $v := .Values.modelVersions }}
-    - weight: {{ default 100 $v.weight }}
+{{- range $i, $v := $versions }}
+    - weight: {{ $v.weight }}
       resources:
       - gvrShort: cm
-        name: {{ default (printf "%s-%d" $i) $.Values.modelName $v.name }}-weight-config
-        namespace: {{ default "modelmesh-serving" $v.namespace }}
+        name: {{ $v.name }}-weight-config
+        namespace: {{ $v.namespace }}
       - gvrShort: isvc
-        name: {{ default (printf "%s-%d" $.Values.modelName $i) $v.name }}
-        namespace: {{ default "modelmesh-serving" $v.namespace }}
+        name: {{ $v.name }}
+        namespace: {{ $v.namespace }}
 {{- end }}
     routingTemplates:
       {{ .Values.trafficStrategy }}:
@@ -44,14 +45,16 @@ data:
                 headers:
                   request:
                     set:
-                      mm-vmodel-id: "{{ default (printf "%s-0" .Values.modelName) (index .Values.modelVersions 0).name }}"
+                      mm-vmodel-id: "{{ (index $versions 0).name }}"
               mirror:
                 host: {{ $.Values.modelmeshServingEndpoint }}
                   port:
                     number: {{ $.Values.modelmeshServingPort }}
+              mirrorPercentage:
+                value: {{ (index $versions 1).weight }}
               headers:
                   request:
                     set:
-                      mm-vmodel-id: "{{ default (printf "%s-1" $.Values.modelName) (index .Values.modelVersions 1).name }}"
+                      mm-vmodel-id: "{{ (index $versions 1).name }}"
 immutable: true
 {{- end }}

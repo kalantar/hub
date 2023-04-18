@@ -1,71 +1,35 @@
+{{- $versions := include "resolve.modelVersions" . | mustFromJson }}
+
 {{- if eq "external" .Values.templateName }}
-{{ include "external.service" . }}
+  {{ include "external.service" . }}
 ---
-{{ include "external.gateway" . }}
+  {{ include "external.gateway" . }}
 
 {{- else if eq "initialize" .Values.templateName }}
-{{ include "initial.virtualservice" . }}
+  {{ include "initial.virtualservice" . }}
 ---
-{{- if eq "blue-green" .Values.trafficStrategy }}
-{{ include "routemap-bluegreen" . }}
-{{- else if eq "canary" .Values.trafficStrategy }}
-{{ include "routemap-canary" . }}
-{{- else if eq "mirror" .Values.trafficStrategy }}
-{{ include "routemap-mirror" . }}
-{{- else }}
-{{ fail "Unknown trafficStrategy"}}
-{{- end }}
+  {{- if eq "blue-green" .Values.trafficStrategy }}
+    {{ include "routemap-bluegreen" . }}
+  {{- else if eq "canary" .Values.trafficStrategy }}
+    {{ include "routemap-canary" . }}
+  {{- else if eq "mirror" .Values.trafficStrategy }}
+    {{ include "routemap-mirror" . }}
+  {{- else }}
+    {{ fail "Unknown trafficStrategy"}}
+  {{- end }}
 ---
-{{- if eq "blue-green" .Values.trafficStrategy}}
-{{- $primary := dict "name" (printf "%s-0" .Values.modelName) }}
-{{- if .Values.modelVersions }}
-{{- if (index .Values.modelVersions 0).name }}
-{{- $primary := set $primary "name" (index .Values.modelVersions 0).name }}
-{{- end }}
-{{- end }}
-{{ include "create.weight-config" $primary }}
-{{- end }}
-
-{{- else if eq "deploy-candidate" .Values.templateName }}
-{{- if eq "blue-green" .Values.trafficStrategy}}
-{{- $candidate := dict "name" (printf "%s-1" .Values.modelName) }}
-{{- if .Values.modelVersions }}
-{{- if (index .Values.modelVersions 1).name }}
-{{- $candidate := set $candidate "name" (index .Values.modelVersions 1).name }}
-{{- end }}
-{{- end }}
-{{ include "create.weight-config" $candidate }}
-{{- end }}
+  {{- if eq "blue-green" .Values.trafficStrategy}}
+    {{- range $i, $v := $versions }}
+      {{ include "create.weight-config" (unset $v "weight") }}
+    {{- end }}
+  {{- end }}
 
 {{- else if eq "modify-weights" .Values.templateName }}
-{{- if eq "blue-green" .Values.trafficStrategy}}
-{{- range $i, $v := .Values.modelVersions }}
-{{- $version := dict "name" (default (printf "%s-%d" $.Values.modelName $i) (index $.Values.modelVersions 0).name) "weight" $v.weight }}
-{{ include "create.weight-config" $version }}
+  {{- if eq "blue-green" .Values.trafficStrategy}}
+    {{- range $i, $v := $versions }}
+      {{ include "create.weight-config" $v }}
 ---
-{{- end }}
-{{- end }}
-
-{{ else if eq "promote-candidate" .Values.templateName }}
-{{- if eq "blue-green" .Values.trafficStrategy}}
-{{- $primary := dict "name" (printf "%s-0" .Values.modelName) }}
-{{- if .Values.modelVersions }}
-{{- if (index .Values.modelVersions 0).name }}
-{{- $primary := set $primary "name" (index .Values.modelVersions 0).name }}
-{{- end }}
-{{- end }}
-{{ include "create.weight-config" $primary }}
-{{- end }}
-
-{{ else if eq "delete-candidate" .Values.templateName }}
-{{- if eq "blue-green" .Values.trafficStrategy}}
-{{- $candidate := dict "name" (printf "%s-1" .Values.modelName) }}
-{{- if .Values.modelVersions }}
-{{- if (index .Values.modelVersions 1).name }}
-{{- $candidate := set $candidate "name" (index .Values.modelVersions 1).name }}
-{{- end }}
-{{- end }}
-{{ include "create.weight-config" $candidate }}
-{{- end }}
+    {{- end }}
+  {{- end }}
 
 {{- end }}
