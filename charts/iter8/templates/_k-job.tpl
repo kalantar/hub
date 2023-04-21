@@ -24,12 +24,8 @@ spec:
         - "-c"
         - |
           iter8 k run --namespace {{ .Release.Namespace }} --group {{ .Release.Name }} -l {{ .Values.logLevel }}
+        resources:
+          {{ toYaml .Values.resources | indent 10 | trim }}
       restartPolicy: Never
-      resources:
-        {{ toYaml .Values.resources | indent 8 | trim }}
-      securityContext:
-        readOnlyRootFilesystem: true
-        runAsNonRoot: true
-        runAsUser: 1000
   backoffLimit: 0
 {{- end }}
