@@ -27,19 +27,27 @@ data:
             name: {{ .Values.modelName }}
           spec:
             gateways:
-            - {{ default "mm-external-gateway" .Values.gatewayName }}
+            - mesh
             hosts:
-            - {{ default "mm-external" .Values.serviceName }}.{{ default "modelmesh-serving" .Values.serviceNamespace }}
-            - {{ default "mm-external" .Values.serviceName }}.{{ default "modelmesh-serving" .Values.serviceNamespace }}.svc
-            - {{ default "mm-external" .Values.serviceName }}.{{ default "modelmesh-serving" .Values.serviceNamespace }}.svc.cluster.local
+            - {{ .Values.modelmeshServingService }}.{{ .Values.modelmeshServingNamespace }}
+            - {{ .Values.modelmeshServingService }}.{{ .Values.modelmeshServingNamespace }}.svc
+            - {{ .Values.modelmeshServingService }}.{{ .Values.modelmeshServingNamespace }}.svc.cluster.local
             http:
             {{- range $i, $v := (rest $versions) }}
             {{ `{{- if gt (index .Weights ` }}{{ print (add1 $i) }}{{ `) 0 }}`}}
             - match:
-{{ toYaml $v.match | indent 16 }}
+                headers:
+                  mm-model:
+                    exact: {{ $.Values.modelName }}
+              {{- if (hasKey $v.match "headers") }}
+{{ toYaml (pick $v.match "headers").headers | indent 18 }}
+              {{- end }}
+              {{- if gt (omit $v.match "headers" | keys | len) 0 }}
+{{ toYaml (omit $v.match "headers") | indent 16 }}
+              {{- end }}
               route:
               - destination:
-                  host: {{ $.Values.modelmeshServingEndpoint }}
+                  host: {{ $.Values.modelmeshServingService }}.{{ $.Values.modelmeshServingNamespace }}.svc.cluster.local
                   port:
                     number: {{ $.Values.modelmeshServingPort }}
                 headers:
@@ -50,7 +58,7 @@ data:
             {{- end }}
             - route:
               - destination:
-                  host: {{ $.Values.modelmeshServingEndpoint }}
+                  host: {{ $.Values.modelmeshServingService }}.{{ $.Values.modelmeshServingNamespace }}.svc.cluster.local
                   port:
                     number: {{ $.Values.modelmeshServingPort }}
                 headers:

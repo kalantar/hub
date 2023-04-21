@@ -14,9 +14,11 @@ data:
 {{- range $i, $v := $versions }}
     - weight: {{ $v.weight }}
       resources:
+      {{- if gt $i 0 }}
       - gvrShort: cm
         name: {{ $v.name }}-weight-config
         namespace: {{ $v.namespace }}
+      {{- end }}
       - gvrShort: isvc
         name: {{ $v.name }}
         namespace: {{ $v.namespace }}
@@ -31,15 +33,19 @@ data:
             name: {{ .Values.modelName }}
           spec:
             gateways:
-            - {{ default "mm-external-gateway" .Values.gatewayName }}
+            - mesh
             hosts:
-            - {{ default "mm-external" .Values.serviceName }}.{{ default "modelmesh-serving" .Values.serviceNamespace }}
-            - {{ default "mm-external" .Values.serviceName }}.{{ default "modelmesh-serving" .Values.serviceNamespace }}.svc
-            - {{ default "mm-external" .Values.serviceName }}.{{ default "modelmesh-serving" .Values.serviceNamespace }}.svc.cluster.local
+            - {{ .Values.modelmeshServingService }}.{{ .Values.modelmeshServingNamespace }}
+            - {{ .Values.modelmeshServingService }}.{{ .Values.modelmeshServingNamespace }}.svc
+            - {{ .Values.modelmeshServingService }}.{{ .Values.modelmeshServingNamespace }}.svc.cluster.local
             http:
-            - route:
+            - match:
+              - headers:
+                  mm-model:
+                    exact: {{ .Values.modelName }}
+              route:
               - destination:
-                  host: {{ $.Values.modelmeshServingEndpoint }}
+                  host: {{ .Values.modelmeshServingService }}.{{ .Values.modelmeshServingNamespace }}.svc.cluster.local
                   port:
                     number: {{ $.Values.modelmeshServingPort }}
                 headers:
@@ -47,7 +53,7 @@ data:
                     set:
                       mm-vmodel-id: "{{ (index $versions 0).name }}"
               mirror:
-                host: {{ $.Values.modelmeshServingEndpoint }}
+                host: {{ .Values.modelmeshServingService }}.{{ .Values.modelmeshServingNamespace }}.svc.cluster.local
                   port:
                     number: {{ $.Values.modelmeshServingPort }}
               mirrorPercentage:

@@ -8,17 +8,12 @@
 {{- end -}}
 
 {{- define "resolve.modelVersions" }}
-
   {{- $defaultNamespace := "modelmesh-serving" }}
-  {{- $defaultWeight := "50" }}
-  {{- if eq "mirror" .Values.trafficStrategy }}
-    {{- $defaultWeight = "100" }}
-  {{- end }}
-  {{- $defaultMatch := list (dict "headers" (dict "traffic" (dict "exact" "test"))) }}
+  {{- $defaultWeight := ternary "100" "50" (eq .Values.trafficStrategy "mirror") }}
+  {{- $defaultMatch := ternary (dict) (dict "headers" (dict "traffic" (dict "exact" "test"))) (eq .Values.trafficStrategy "canary") }}
 
   {{- $mV := list }}
   {{- if .Values.modelVersions }}
-    {{- $defaultMatch := dict }}
     {{- range $i, $ver := .Values.modelVersions }}
       {{- $v := merge $ver }}
       {{- $v = set $v "name" (default (printf "%s-%d" $.Values.modelName $i) $ver.name) }}

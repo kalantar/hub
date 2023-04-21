@@ -31,16 +31,20 @@ data:
             name: {{ .Values.modelName }}
           spec:
             gateways:
-            - {{ default "mm-external-gateway" .Values.gatewayName }}
+            - mesh
             hosts:
-            - {{ default "mm-external" .Values.serviceName }}.{{ default "modelmesh-serving" .Values.serviceNamespace }}
-            - {{ default "mm-external" .Values.serviceName }}.{{ default "modelmesh-serving" .Values.serviceNamespace }}.svc
-            - {{ default "mm-external" .Values.serviceName }}.{{ default "modelmesh-serving" .Values.serviceNamespace }}.svc.cluster.local
+            - {{ .Values.modelmeshServingService }}.{{ .Values.modelmeshServingNamespace }}
+            - {{ .Values.modelmeshServingService }}.{{ .Values.modelmeshServingNamespace }}.svc
+            - {{ .Values.modelmeshServingService }}.{{ .Values.modelmeshServingNamespace }}.svc.cluster.local
             http:
-            - route:
+            - match:
+              - headers:
+                  mm-model:
+                    exact: {{ .Values.modelName }}
+              route:
               # primary model
               - destination:
-                  host: {{ $.Values.modelmeshServingEndpoint }}
+                  host: {{ .Values.modelmeshServingService }}.{{ .Values.modelmeshServingNamespace }}.svc.cluster.local
                   port:
                     number: {{ $.Values.modelmeshServingPort }}
                 {{ `{{- if gt (index .Weights 1) 0 }}` }}
@@ -54,7 +58,7 @@ data:
               {{- range $i, $v := (rest $versions) }}
               {{ `{{- if gt (index .Weights ` }}{{ print (add1 $i) }}{{ `) 0 }}`}}
               - destination:
-                  host: {{ $.Values.modelmeshServingEndpoint }}
+                  host: {{ $.Values.modelmeshServingService }}.{{ $.Values.modelmeshServingNamespace }}.svc.cluster.local
                   port:
                     number: {{ $.Values.modelmeshServingPort }}
                 weight: {{ `{{ index .Weights `}}{{ print (add1 $i) }}{{` }}`}}
