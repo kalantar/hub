@@ -11,7 +11,7 @@ metadata:
 data:
   strSpec: |
     versions: 
-    {{- range $i, $v := .Values.modelVersions }}
+    {{- range $i, $v := $versions }}
     - resources:
       - gvrShort: isvc
         name: {{ default (printf "%s-%d" $.Values.modelName $i) $v.name }}
