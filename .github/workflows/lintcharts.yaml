@@ -52,8 +52,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Get modified files in the ${{ matrix.version }} folder
+        id: modified-files
+        uses: tj-actions/changed-files@v35
+        with:
+          files: ${{ matrix.version }}
+
       - name: Lint Helm charts in the ${{ matrix.version }} folder
-        id: kube-lint-scan
         uses: stackrox/kube-linter-action@v1
+        if: steps.modified-files.outputs.any_modified == 'true'
         with:
           directory: ${{ matrix.version }}
