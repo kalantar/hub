@@ -383,7 +383,7 @@ jobs:
     - name: Start traffic
       if: steps.modified-files.outputs.any_modified == 'true'
       run: |
-        helm install traffic charts/traffic -f charts/traffic/testdata/config.yaml
+        helm install traffic charts/traffic -f charts/traffic/testdata/values.yaml
 
     - name: Check traffic
       if: steps.modified-files.outputs.any_modified == 'true'
