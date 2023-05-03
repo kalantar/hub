@@ -419,6 +419,7 @@ jobs:
       if: steps.modified-files.outputs.any_modified == 'true'
       run: |
         kubectl apply -f .github/vs-crd.yaml
+        sleep 5
         kubectl wait --for condition=established --timeout=60s crd/virtualservices.networking.istio.io
         
     - name: Start initialize
