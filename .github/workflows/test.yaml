@@ -435,4 +435,4 @@ jobs:
     - name: Check initialize
       if: steps.modified-files.outputs.any_modified == 'true'
       run: |
-        kubectl get cm/wisdom-routemap,cm/wisdom-0-weight-config,cm/wisdom-0-weight-config,virtualservice/wisdom 
+        kubectl get cm/wisdom-routemap cm/wisdom-0-weight-config cm/wisdom-0-weight-config virtualservice/wisdom 
