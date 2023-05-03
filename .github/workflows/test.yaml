@@ -434,6 +434,7 @@ jobs:
     - name: Check initialize
       if: steps.modified-files.outputs.any_modified == 'true'
       run: |
+        sleep 5
         kubectl get cm/wisdom-routemap cm/wisdom-0-weight-config cm/wisdom-0-weight-config virtualservice/wisdom 
 
   traffic-template-canary:
