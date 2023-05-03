@@ -54,10 +54,10 @@ data:
                       mm-vmodel-id: "{{ (index $versions 0).name }}"
               mirror:
                 host: {{ .Values.modelmeshServingService }}.{{ .Values.modelmeshServingNamespace }}.svc.cluster.local
-                  port:
-                    number: {{ $.Values.modelmeshServingPort }}
+                port:
+                  number: {{ $.Values.modelmeshServingPort }}
               mirrorPercentage:
-                value: {{ (index $versions 1).weight }}
+                value: {{ `{{ index .Weights `}} 1 {{` }}`}}
               headers:
                   request:
                     set:
