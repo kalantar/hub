@@ -152,3 +152,177 @@ jobs:
       uses: stackrox/kube-linter-action@v1
       with:
         directory: iter8.yaml
+
+  traffic-templates-initialize-bg:
+    name: Lint blue-green traffic initialize
+    runs-on: ubuntu-latest
+
+    steps:    
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Get modified files in the charts/traffic-templates folder
+      id: modified-files
+      uses: tj-actions/changed-files@v35
+      with:
+        files: charts/traffic-templates
+
+    - uses: azure/setup-helm@v3
+      if: steps.modified-files.outputs.any_modified == 'true'
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create Kubernetes YAML file
+      if: steps.modified-files.outputs.any_modified == 'true'
+      run: |
+        helm template charts/traffic-templates \
+        --set templateName=initialize \
+        --set targetEnv=kserve-modelmesh \
+        --set trafficStrategy=blue-green \
+        --set modelName=wisdom >> tpl.yaml
+
+    - name: Lint Kubernetes YAML file
+      if: steps.modified-files.outputs.any_modified == 'true'
+      uses: stackrox/kube-linter-action@v1
+      with:
+        directory: tpl.yaml
+
+  traffic-templates-initialize-canary:
+    name: Lint blue-green traffic initialize
+    runs-on: ubuntu-latest
+
+    steps:    
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Get modified files in the charts/traffic-templates folder
+      id: modified-files
+      uses: tj-actions/changed-files@v35
+      with:
+        files: charts/traffic-templates
+
+    - uses: azure/setup-helm@v3
+      if: steps.modified-files.outputs.any_modified == 'true'
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create Kubernetes YAML file
+      if: steps.modified-files.outputs.any_modified == 'true'
+      run: |
+        helm template charts/traffic-templates \
+        --set templateName=initialize \
+        --set targetEnv=kserve-modelmesh \
+        --set trafficStrategy=canary \
+        --set modelName=wisdom >> tpl.yaml
+
+    - name: Lint Kubernetes YAML file
+      if: steps.modified-files.outputs.any_modified == 'true'
+      uses: stackrox/kube-linter-action@v1
+      with:
+        directory: tpl.yaml
+
+  traffic-templates-initialize-mirror:
+    name: Lint blue-green traffic initialize
+    runs-on: ubuntu-latest
+
+    steps:    
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Get modified files in the charts/traffic-templates folder
+      id: modified-files
+      uses: tj-actions/changed-files@v35
+      with:
+        files: charts/traffic-templates
+
+    - uses: azure/setup-helm@v3
+      if: steps.modified-files.outputs.any_modified == 'true'
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create Kubernetes YAML file
+      if: steps.modified-files.outputs.any_modified == 'true'
+      run: |
+        helm template charts/traffic-templates \
+        --set templateName=initialize \
+        --set targetEnv=kserve-modelmesh \
+        --set trafficStrategy=mirror \
+        --set modelName=wisdom >> tpl.yaml
+
+    - name: Lint Kubernetes YAML file
+      if: steps.modified-files.outputs.any_modified == 'true'
+      uses: stackrox/kube-linter-action@v1
+      with:
+        directory: tpl.yaml
+
+  traffic-templates-modify-weights-bg:
+    name: Lint blue-green traffic initialize
+    runs-on: ubuntu-latest
+
+    steps:    
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Get modified files in the charts/traffic-templates folder
+      id: modified-files
+      uses: tj-actions/changed-files@v35
+      with:
+        files: charts/traffic-templates
+
+    - uses: azure/setup-helm@v3
+      if: steps.modified-files.outputs.any_modified == 'true'
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create Kubernetes YAML file
+      if: steps.modified-files.outputs.any_modified == 'true'
+      run: |
+        helm template charts/traffic-templates \
+        --set templateName=modify-weights \
+        --set targetEnv=kserve-modelmesh \
+        --set trafficStrategy=blue-green \
+        --set modelName=wisdom \
+        --set 'modelVersions[0].weight=20' \
+        --set 'modelVersions[1].weight=80' >> tpl.yaml
+
+    - name: Lint Kubernetes YAML file
+      if: steps.modified-files.outputs.any_modified == 'true'
+      uses: stackrox/kube-linter-action@v1
+      with:
+        directory: tpl.yaml
+
+  traffic-templates-modify-weights-mirror:
+    name: Lint blue-green traffic initialize
+    runs-on: ubuntu-latest
+
+    steps:    
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Get modified files in the charts/traffic-templates folder
+      id: modified-files
+      uses: tj-actions/changed-files@v35
+      with:
+        files: charts/traffic-templates
+
+    - uses: azure/setup-helm@v3
+      if: steps.modified-files.outputs.any_modified == 'true'
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create Kubernetes YAML file
+      if: steps.modified-files.outputs.any_modified == 'true'
+      run: |
+        helm template charts/traffic-templates \
+        --set templateName=modify-weights \
+        --set targetEnv=kserve-modelmesh \
+        --set trafficStrategy=mirror \
+        --set modelName=wisdom \
+        --set mirrorPercentage=20 >> tpl.yaml
+
+    - name: Lint Kubernetes YAML file
+      if: steps.modified-files.outputs.any_modified == 'true'
+      uses: stackrox/kube-linter-action@v1
+      with:
+        directory: tpl.yaml
+
