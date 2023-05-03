@@ -1,11 +1,6 @@
 {{- $versions := include "resolve.modelVersions" . | mustFromJson }}
 
-{{- if eq "external" .Values.templateName }}
-  {{ include "external.service" . }}
----
-  {{ include "external.gateway" . }}
-
-{{- else if eq "initialize" .Values.templateName }}
+{{- if eq "initialize" .Values.templateName }}
   {{ include "initial.virtualservice" . }}
 ---
   {{- if eq "blue-green" .Values.trafficStrategy }}

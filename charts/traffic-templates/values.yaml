@@ -8,26 +8,8 @@ modelmeshServingNamespace: modelmesh-serving
 modelmeshServingPort: 8033
 
 ### templateName is the name of template to apply
-### valid values are: 'external', 'initialize' and 'modify-weights'
+### valid values are: 'initialize' and 'modify-weights'
 #$$ these are documented below
-
-###########################################################
-### configures the service mesh gateway
-# templateName: external
-###
-
-### required fields are:
-# model serving environment. valid values are 'kserve' and 'kserve-modelmesh'
-# targetEnv:
-
-### optional fields are:
-
-# name of the service mesh gateway. optional. defaults to 'mm-external-gateway'
-gatewayName: mm-external-gateway
-# user provided name of inference service. optional. defaults to 'mm-external'
-serviceName: mm-external
-# namespace where Service is deployed. optional. defaults to 'modelmesh-serving'
-serviceNamespace: modelmesh-serving
 
 ###########################################################
 ### initializes model rollout for a given traffic pattern
