@@ -408,9 +408,6 @@ jobs:
       with:
         files: charts/traffic-templates
 
-    - uses: iter8-tools/iter8@v0.13
-      if: steps.modified-files.outputs.any_modified == 'true'
-
     - name: Start kind cluster ${{ matrix.version }}
       uses: helm/kind-action@v1.5.0
       if: steps.modified-files.outputs.any_modified == 'true'
@@ -455,9 +452,6 @@ jobs:
       with:
         files: charts/traffic-templates
 
-    - uses: iter8-tools/iter8@v0.13
-      if: steps.modified-files.outputs.any_modified == 'true'
-
     - name: Start kind cluster ${{ matrix.version }}
       uses: helm/kind-action@v1.5.0
       if: steps.modified-files.outputs.any_modified == 'true'
@@ -501,9 +495,6 @@ jobs:
       uses: tj-actions/changed-files@v35
       with:
         files: charts/traffic-templates
-
-    - uses: iter8-tools/iter8@v0.13
-      if: steps.modified-files.outputs.any_modified == 'true'
 
     - name: Start kind cluster ${{ matrix.version }}
       uses: helm/kind-action@v1.5.0
