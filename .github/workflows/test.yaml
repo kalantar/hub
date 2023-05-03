@@ -428,11 +428,14 @@ jobs:
         --set templateName=initialize \
         --set targetEnv=kserve-modelmesh \
         --set trafficStrategy=blue-green \
-        --set modelName=wisdom | kubectl apply -f -
+        --set modelName=wisdom >> manifest.yaml
+        cat manifest.yaml
+        kubectl apply -f manifest.yaml
         
     - name: Check initialize
       if: steps.modified-files.outputs.any_modified == 'true'
       run: |
+        kubectl get configmap,virtualservice
         kubectl get cm/wisdom-routemap cm/wisdom-0-weight-config cm/wisdom-0-weight-config virtualservice/wisdom 
 
   traffic-template-canary:
@@ -473,11 +476,14 @@ jobs:
         --set templateName=initialize \
         --set targetEnv=kserve-modelmesh \
         --set trafficStrategy=canary \
-        --set modelName=wisdom | kubectl apply -f -
+        --set modelName=wisdom >> manifest.yaml
+        cat manifest.yaml
+        kubectl apply -f manifest.yaml
         
     - name: Check initialize
       if: steps.modified-files.outputs.any_modified == 'true'
       run: |
+        kubectl get configmap,virtualservice
         kubectl get cm/wisdom-routemap virtualservice/wisdom 
 
   traffic-template-mirror:
@@ -518,9 +524,12 @@ jobs:
         --set templateName=initialize \
         --set targetEnv=kserve-modelmesh \
         --set trafficStrategy=mirror \
-        --set modelName=wisdom | kubectl apply -f -
+        --set modelName=wisdom >> manifest.yaml
+        cat manifest.yaml
+        kubectl apply -f manifest.yaml
         
     - name: Check initialize
       if: steps.modified-files.outputs.any_modified == 'true'
       run: |
+        kubectl get configmap,virtualservice
         kubectl get cm/wisdom-routemap cm/wisdom-0-weight-config virtualservice/wisdom 
