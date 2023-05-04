@@ -52,6 +52,7 @@ data:
                   request:
                     set:
                       mm-vmodel-id: "{{ (index $versions 0).name }}"
+              {{ `{{- if gt (index .Weights ` }} 1 {{ `) 0 }}`}}
               mirror:
                 host: {{ .Values.modelmeshServingService }}.{{ .Values.modelmeshServingNamespace }}.svc.cluster.local
                 port:
@@ -62,5 +63,6 @@ data:
                   request:
                     set:
                       mm-vmodel-id: "{{ (index $versions 1).name }}"
+              {{ `{{- end }}`}}
 immutable: true
 {{- end }}
