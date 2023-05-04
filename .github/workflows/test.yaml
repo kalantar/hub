@@ -389,3 +389,147 @@ jobs:
       if: steps.modified-files.outputs.any_modified == 'true'
       run: |
         kubectl rollout status --watch --timeout=60s statefulset.apps/traffic
+
+  traffic-template-bg:
+    name: blue-green initialize
+    needs: get_versions
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: ${{ fromJson(needs.get_versions.outputs.matrix) }}
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Get modified files in the charts/traffic folder
+      id: modified-files
+      uses: tj-actions/changed-files@v35
+      with:
+        files: charts/traffic-templates
+
+    - name: Start kind cluster ${{ matrix.version }}
+      uses: helm/kind-action@v1.5.0
+      if: steps.modified-files.outputs.any_modified == 'true'
+      with:
+        wait: 300s
+        node_image: ${{ matrix.version }}
+    
+    - name: Install VirtualService CRD
+      if: steps.modified-files.outputs.any_modified == 'true'
+      run: |
+        kubectl apply -f https://raw.githubusercontent.com/istio/istio/master/manifests/charts/base/crds/crd-all.gen.yaml
+        kubectl wait --for condition=established --timeout=60s crd/virtualservices.networking.istio.io
+        
+    - name: Start initialize
+      if: steps.modified-files.outputs.any_modified == 'true'
+      run: |
+        helm template traffic charts/traffic-templates \
+        --set templateName=initialize \
+        --set targetEnv=kserve-modelmesh \
+        --set trafficStrategy=blue-green \
+        --set modelName=wisdom > manifest.yaml
+        cat manifest.yaml
+        kubectl apply -f manifest.yaml
+        
+    - name: Check initialize
+      if: steps.modified-files.outputs.any_modified == 'true'
+      run: |
+        kubectl get configmap,virtualservice
+        kubectl get cm/wisdom-routemap cm/wisdom-0-weight-config cm/wisdom-0-weight-config virtualservice/wisdom 
+
+  traffic-template-canary:
+    name: canary initialize
+    needs: get_versions
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: ${{ fromJson(needs.get_versions.outputs.matrix) }}
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Get modified files in the charts/traffic folder
+      id: modified-files
+      uses: tj-actions/changed-files@v35
+      with:
+        files: charts/traffic-templates
+
+    - name: Start kind cluster ${{ matrix.version }}
+      uses: helm/kind-action@v1.5.0
+      if: steps.modified-files.outputs.any_modified == 'true'
+      with:
+        wait: 300s
+        node_image: ${{ matrix.version }}
+    
+    - name: Install VirtualService CRD
+      if: steps.modified-files.outputs.any_modified == 'true'
+      run: |
+        kubectl apply -f https://raw.githubusercontent.com/istio/istio/master/manifests/charts/base/crds/crd-all.gen.yaml
+        kubectl wait --for condition=established --timeout=60s crd/virtualservices.networking.istio.io
+        
+    - name: Start initialize
+      if: steps.modified-files.outputs.any_modified == 'true'
+      run: |
+        helm template traffic charts/traffic-templates \
+        --set templateName=initialize \
+        --set targetEnv=kserve-modelmesh \
+        --set trafficStrategy=canary \
+        --set modelName=wisdom > manifest.yaml
+        cat manifest.yaml
+        kubectl apply -f manifest.yaml
+        
+    - name: Check initialize
+      if: steps.modified-files.outputs.any_modified == 'true'
+      run: |
+        kubectl get configmap,virtualservice
+        kubectl get cm/wisdom-routemap virtualservice/wisdom 
+
+  traffic-template-mirror:
+    name: mirror initialize
+    needs: get_versions
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: ${{ fromJson(needs.get_versions.outputs.matrix) }}
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Get modified files in the charts/traffic folder
+      id: modified-files
+      uses: tj-actions/changed-files@v35
+      with:
+        files: charts/traffic-templates
+
+    - name: Start kind cluster ${{ matrix.version }}
+      uses: helm/kind-action@v1.5.0
+      if: steps.modified-files.outputs.any_modified == 'true'
+      with:
+        wait: 300s
+        node_image: ${{ matrix.version }}
+    
+    - name: Install VirtualService CRD
+      if: steps.modified-files.outputs.any_modified == 'true'
+      run: |
+        kubectl apply -f https://raw.githubusercontent.com/istio/istio/master/manifests/charts/base/crds/crd-all.gen.yaml
+        kubectl wait --for condition=established --timeout=60s crd/virtualservices.networking.istio.io
+        
+    - name: Start initialize
+      if: steps.modified-files.outputs.any_modified == 'true'
+      run: |
+        helm template traffic charts/traffic-templates \
+        --set templateName=initialize \
+        --set targetEnv=kserve-modelmesh \
+        --set trafficStrategy=mirror \
+        --set modelName=wisdom > manifest.yaml
+        cat manifest.yaml
+        kubectl apply -f manifest.yaml
+        
+    - name: Check initialize
+      if: steps.modified-files.outputs.any_modified == 'true'
+      run: |
+        kubectl get configmap,virtualservice
+        kubectl get cm/wisdom-routemap cm/wisdom-1-weight-config virtualservice/wisdom 
