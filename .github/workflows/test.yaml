@@ -439,7 +439,7 @@ jobs:
         kubectl get cm/wisdom-routemap cm/wisdom-0-weight-config cm/wisdom-0-weight-config virtualservice/wisdom 
 
   traffic-template-canary:
-    name: blue-green initialize
+    name: canary initialize
     needs: get_versions
     runs-on: ubuntu-latest
     strategy:
@@ -487,7 +487,7 @@ jobs:
         kubectl get cm/wisdom-routemap virtualservice/wisdom 
 
   traffic-template-mirror:
-    name: blue-green initialize
+    name: mirror initialize
     needs: get_versions
     runs-on: ubuntu-latest
     strategy:
@@ -532,4 +532,4 @@ jobs:
       if: steps.modified-files.outputs.any_modified == 'true'
       run: |
         kubectl get configmap,virtualservice
-        kubectl get cm/wisdom-routemap cm/wisdom-0-weight-config virtualservice/wisdom 
+        kubectl get cm/wisdom-routemap cm/wisdom-1-weight-config virtualservice/wisdom 
