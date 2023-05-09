@@ -6,17 +6,13 @@ metadata:
   name: {{ .Values.modelName }}
 spec:
   gateways:
-  - mesh
+  - {{ .Values.externalGateway }}
   hosts:
-  - {{ .Values.modelmeshServingService }}.{{ .Values.modelmeshServingNamespace }}
-  - {{ .Values.modelmeshServingService }}.{{ .Values.modelmeshServingNamespace }}.svc
-  - {{ .Values.modelmeshServingService }}.{{ .Values.modelmeshServingNamespace }}.svc.cluster.local
+  - {{ .Values.modelName }}.{{ .Values.modelmeshServingNamespace }}
+  - {{ .Values.modelName }}.{{ .Values.modelmeshServingNamespace }}.svc
+  - {{ .Values.modelName }}.{{ .Values.modelmeshServingNamespace }}.svc.cluster.local
   http:
-  - match:
-    - headers:
-        mm-model:
-          exact: {{ .Values.modelName }}
-    route:
+  - route:
     - destination:
         host: {{ .Values.modelmeshServingService }}.{{ .Values.modelmeshServingNamespace }}.svc.cluster.local
         port:

@@ -1,6 +1,8 @@
 {{- $versions := include "resolve.modelVersions" . | mustFromJson }}
 
-{{- if eq "initialize" .Values.templateName }}
+{{- if eq "initialize-rollout" .Values.templateName }}
+  {{ include "initial.gateway" . }}
+---
   {{ include "initial.virtualservice" . }}
 ---
   {{- if eq "blue-green" .Values.trafficStrategy }}

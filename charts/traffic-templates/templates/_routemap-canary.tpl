@@ -27,11 +27,11 @@ data:
             name: {{ .Values.modelName }}
           spec:
             gateways:
-            - mesh
+            - {{ .Values.externalGateway }}
             hosts:
-            - {{ .Values.modelmeshServingService }}.{{ .Values.modelmeshServingNamespace }}
-            - {{ .Values.modelmeshServingService }}.{{ .Values.modelmeshServingNamespace }}.svc
-            - {{ .Values.modelmeshServingService }}.{{ .Values.modelmeshServingNamespace }}.svc.cluster.local
+            - {{ .Values.modelName }}.{{ .Values.modelmeshServingNamespace }}
+            - {{ .Values.modelName }}.{{ .Values.modelmeshServingNamespace }}.svc
+            - {{ .Values.modelName }}.{{ .Values.modelmeshServingNamespace }}.svc.cluster.local
             http:
             {{- /* For candidate versions, ensure mm-model header is required in all matches */}}
             {{- range $i, $v := (rest $versions) }}
@@ -40,12 +40,9 @@ data:
             - match:
               {{- /* A match may have several ORd clauses */}}
               {{- range $j, $m := $v.match }}
-              {{- /* include mm-model header requirement in each clause */}}
+              {{- /* include any other header requirements */}}
+              {{- if (hasKey $m "headers") }}
               - headers:
-                  mm-model:
-                    exact: {{ $.Values.modelName }}
-                {{- /* include any other header requirements */}}
-                {{- if (hasKey $m "headers") }}
 {{ toYaml (pick $m "headers").headers | indent 18 }}
                 {{- end }}
                 {{- /* include any other (non-header) requirements */}}
@@ -64,11 +61,7 @@ data:
                       mm-vmodel-id: "{{ (index $versions (add1 $i)).name }}"
             {{ `{{- end }}`}}
             {{- end }}
-            - match:
-              - headers:
-                  mm-model:
-                    exact: {{ $.Values.modelName }}
-              route:
+            - route:
               - destination:
                   host: {{ $.Values.modelmeshServingService }}.{{ $.Values.modelmeshServingNamespace }}.svc.cluster.local
                   port:

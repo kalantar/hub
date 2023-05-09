@@ -7,13 +7,17 @@ modelmeshServingService: modelmesh-serving
 modelmeshServingNamespace: modelmesh-serving
 modelmeshServingPort: 8033
 
+# default Istio Gateway name
+externalGateway: mm-gateway
+
+
 ### templateName is the name of template to apply
 ### valid values are: 'initialize' and 'modify-weights'
 #$$ these are documented below
 
 ###########################################################
 ### initializes model rollout for a given traffic pattern
-# templateName: initialize
+# templateName: initialize-rollout
 ###
 
 ### required fields are:
