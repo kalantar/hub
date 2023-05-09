@@ -425,7 +425,7 @@ jobs:
       if: steps.modified-files.outputs.any_modified == 'true'
       run: |
         helm template traffic charts/traffic-templates \
-        --set templateName=initialize \
+        --set templateName=initialize-rollout \
         --set targetEnv=kserve-modelmesh \
         --set trafficStrategy=blue-green \
         --set modelName=wisdom > manifest.yaml
@@ -473,7 +473,7 @@ jobs:
       if: steps.modified-files.outputs.any_modified == 'true'
       run: |
         helm template traffic charts/traffic-templates \
-        --set templateName=initialize \
+        --set templateName=initialize-rollout \
         --set targetEnv=kserve-modelmesh \
         --set trafficStrategy=canary \
         --set modelName=wisdom > manifest.yaml
@@ -521,7 +521,7 @@ jobs:
       if: steps.modified-files.outputs.any_modified == 'true'
       run: |
         helm template traffic charts/traffic-templates \
-        --set templateName=initialize \
+        --set templateName=initialize-rollout \
         --set targetEnv=kserve-modelmesh \
         --set trafficStrategy=mirror \
         --set modelName=wisdom > manifest.yaml
